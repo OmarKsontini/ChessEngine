@@ -9,7 +9,7 @@
 <body>
 <div class="board">
   @for (square of squares; track square.index) {
-    <div class="square" [class]="square.color">
+    <div class="square" [class]="square.color" (click)="onSquareClick(square)">
       @if (square.piece) {
         <img [src]="'assets/pieces/' + square.piece + '.svg'" />
       

@@ -9,7 +9,10 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('chess-ui');
- squares: any[] = [];
+  squares: any[] = [];
+  ok = 0 ;
+  oldSquare : any ;
+  whiteOrBlack=0;
 
   constructor() {
     this.initBoard();
@@ -32,7 +35,11 @@ export class App {
         if (row === 7) piece = 'w' + backRow[col];
 
         this.squares.push({
+          
           index: row * 8 + col,
+          first_move: 0,
+          rowI : row+1 ,
+          colI : col+1 ,
           color: (row + col) % 2 === 0 ? 'light' : 'dark',
           piece
         });
@@ -40,8 +47,53 @@ export class App {
 
     }
 
-    console.log(this.squares)
   }
+  move(square : any){
+    if (this.ok === 0){
+      this.oldSquare = square ;
+      console.log(this.oldSquare)
+      square.color="highlight";
+      this.ok = 1;
+      console.log(this.oldSquare)
+      
+
+    }
+    else {
+      console.log("old square: ") ;
+      console.log(this.oldSquare)
+      this.squares[square.index].piece = this.oldSquare.piece 
+      this.squares[this.oldSquare.index].piece = null 
+      this.squares[this.oldSquare.index].color = this.oldSquare.color
+
+      this.ok=0;
+    }
+
+  }
+
+
+selectedSquare: any = null;
+
+onSquareClick(square: any) {
+  // first click - select a white piece
+  if (!this.selectedSquare) {
+    if (square.piece && square.piece[0] === 'w') {
+      this.selectedSquare = square;
+      square.color = 'highlight';
+    }
+  } 
+  // second click - move
+  else {
+    // restore old color
+    this.squares[this.selectedSquare.index].color = 
+      (Math.floor(this.selectedSquare.index / 8) + this.selectedSquare.index % 8) % 2 === 0 ? 'light' : 'dark';
+    
+    // move piece
+    this.squares[square.index].piece = this.selectedSquare.piece;
+    this.squares[this.selectedSquare.index].piece = null;
+    
+    this.selectedSquare = null;
+  }
+}
 
 
 
